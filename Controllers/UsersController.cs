@@ -1,3 +1,4 @@
+using jobs.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Authorization;
 using WebApi.Entities;
@@ -16,6 +17,14 @@ namespace WebApi.Controllers
         public UsersController(IUserService userService)
         {
             _userService = userService;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public IActionResult Register(RegisterRequest model)
+        {
+            _userService.Register(model);
+            return Ok(new { message = "Registration successful" });
         }
 
         [AllowAnonymous]
@@ -45,5 +54,7 @@ namespace WebApi.Controllers
             var user =  _userService.GetById(id);
             return Ok(user);
         }
+
+        
     }
 }

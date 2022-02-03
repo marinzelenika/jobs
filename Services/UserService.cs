@@ -6,6 +6,8 @@ using WebApi.Authorization;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Users;
+using jobs.Models.Users;
+using AutoMapper;
 
 namespace WebApi.Services
 {
@@ -14,6 +16,7 @@ namespace WebApi.Services
         AuthenticateResponse Authenticate(AuthenticateRequest model);
         IEnumerable<User> GetAll();
         User GetById(int id);
+        void Register(RegisterRequest model);
     }
 
     public class UserService : IUserService
@@ -21,15 +24,18 @@ namespace WebApi.Services
         private DataContext _context;
         private IJwtUtils _jwtUtils;
         private readonly AppSettings _appSettings;
+        private readonly IMapper _mapper;
 
         public UserService(
             DataContext context,
             IJwtUtils jwtUtils,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IMapper mapper)
         {
             _context = context;
             _jwtUtils = jwtUtils;
             _appSettings = appSettings.Value;
+            _mapper = mapper;
         }
 
 
@@ -57,6 +63,23 @@ namespace WebApi.Services
             var user = _context.Users.Find(id);
             if (user == null) throw new KeyNotFoundException("User not found");
             return user;
+        }
+
+             public void Register(RegisterRequest model)
+        {
+            // validate
+            if (_context.Users.Any(x => x.Username == model.Username))
+                throw new AppException("Username '" + model.Username + "' is already taken");
+
+            // map model to new user object
+            var user = _mapper.Map<User>(model);
+
+            // hash password
+            user.PasswordHash = BCryptNet.HashPassword(model.Password);
+
+            // save user
+            _context.Users.Add(user);
+            _context.SaveChanges();
         }
     }
 }

@@ -8,6 +8,8 @@ using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Services;
 using System.Text.Json.Serialization;
+using AutoMapper;
+using jobs.Helpers;
 
 namespace WebApi
 {
@@ -37,6 +39,16 @@ namespace WebApi
             // configure DI for application services
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IUserService, UserService>();
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new AutoMapperProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddMvc();
         }
 
         // configure the HTTP request pipeline

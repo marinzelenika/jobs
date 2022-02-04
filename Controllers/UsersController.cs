@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using jobs.Models.Users;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Authorization;
@@ -21,10 +22,10 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public IActionResult Register(RegisterRequest model)
+        public async Task<IActionResult> Register(RegisterRequest model)
         {
-            _userService.Register(model);
-            return Ok(new { message = "Registration successful" });
+            await _userService.Register(model);
+            return Ok(new { message = "Registration successful"});
         }
 
         [AllowAnonymous]

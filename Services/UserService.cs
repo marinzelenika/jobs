@@ -8,6 +8,8 @@ using WebApi.Helpers;
 using WebApi.Models.Users;
 using jobs.Models.Users;
 using AutoMapper;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Services
 {
@@ -16,7 +18,7 @@ namespace WebApi.Services
         AuthenticateResponse Authenticate(AuthenticateRequest model);
         IEnumerable<User> GetAll();
         User GetById(int id);
-        void Register(RegisterRequest model);
+        Task<User> Register(RegisterRequest model);
     }
 
     public class UserService : IUserService
@@ -65,21 +67,32 @@ namespace WebApi.Services
             return user;
         }
 
-             public void Register(RegisterRequest model)
+        public async Task<User> Register(RegisterRequest model)
         {
             // validate
-            if (_context.Users.Any(x => x.Username == model.Username))
+            if (await UserExists(model.Username))
                 throw new AppException("Username '" + model.Username + "' is already taken");
 
             // map model to new user object
             var user = _mapper.Map<User>(model);
-
+            user.Role = Role.User;
             // hash password
             user.PasswordHash = BCryptNet.HashPassword(model.Password);
 
             // save user
             _context.Users.Add(user);
             _context.SaveChanges();
+            return user;
+        }
+
+        public async Task<bool> UserExists(string username)
+        {
+            if (await _context.Users.AnyAsync(x => x.Username.ToLower() == username.ToLower()))
+            {
+                return true;
+            }
+            return false;
+
         }
     }
 }

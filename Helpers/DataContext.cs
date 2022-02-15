@@ -1,3 +1,4 @@
+using dotnet_5_role_based_authorization_api.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WebApi.Entities;
@@ -7,6 +8,7 @@ namespace WebApi.Helpers
     public class DataContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<JobPost> JobPosts { get; set; }
 
         private readonly IConfiguration Configuration;
 

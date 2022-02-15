@@ -10,6 +10,9 @@ using WebApi.Services;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using jobs.Helpers;
+using WebApi.Services.JobPostService;
+using dotnet_5_role_based_authorization_api.Services.JobPostService;
+using dotnet_5_role_based_authorization_api.Repositories;
 
 namespace WebApi
 {
@@ -36,9 +39,12 @@ namespace WebApi
             // configure strongly typed settings object
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
+            services.AddScoped<IJobPostRepository, JobPostRepository>();
             // configure DI for application services
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IJobPostService, JobPostService>();
+            
 
             var mappingConfig = new MapperConfiguration(mc =>
             {

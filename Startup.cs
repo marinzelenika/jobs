@@ -13,6 +13,7 @@ using jobs.Helpers;
 using WebApi.Services.JobPostService;
 using dotnet_5_role_based_authorization_api.Services.JobPostService;
 using dotnet_5_role_based_authorization_api.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi
 {
@@ -35,6 +36,9 @@ namespace WebApi
                 // serialize enums as strings in api responses (e.g. Role)
                 x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+
+            
+            //services.AddDatabaseDeveloperPageExceptionFilter();
 
             // configure strongly typed settings object
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));

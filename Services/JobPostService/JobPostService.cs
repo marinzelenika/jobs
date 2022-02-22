@@ -47,15 +47,15 @@ namespace dotnet_5_role_based_authorization_api.Services.JobPostService
         }
 
         public async Task<JobPostReadDto> UpdateJobPostAsync(EditJobPostDto editedJobPost)
-        {
-           
+        { 
                 JobPost JobPost = await _JobPostRepository.GetByIdAsync(editedJobPost.Id);
                 _mapper.Map(editedJobPost, JobPost);
 
                 _JobPostRepository.Update(JobPost);
                 await _JobPostRepository.SaveAsync();
-                var response = _mapper.Map<JobPostReadDto>(JobPost);
+                var response = _mapper.Map <JobPostReadDto>(JobPost);
                 return response;
+        
         }
 
         public async Task<List<JobPostReadDto>> DeleteJobPostAsync(int id)

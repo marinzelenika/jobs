@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using WebApi.Entities;
 
 namespace dotnet_5_role_based_authorization_api.Entities
@@ -14,5 +15,8 @@ namespace dotnet_5_role_based_authorization_api.Entities
         public DateTime updatedAt { get; set; }
         public bool Invalidated { get; set; }
         public User User { get; set; }
+
+        public ICollection<Tag> Tags { get; set; }
+        public List<Jobs_Tags> PostTags { get; set; }
     }
 }

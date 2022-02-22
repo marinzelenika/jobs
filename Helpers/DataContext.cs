@@ -9,6 +9,8 @@ namespace WebApi.Helpers
     {
         public DbSet<User> Users { get; set; }
         public DbSet<JobPost> JobPosts { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Jobs_Tags> JobsTags { get; set; }
 
         private readonly IConfiguration Configuration;
 
@@ -19,8 +21,26 @@ namespace WebApi.Helpers
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            // in memory database used for simplicity, change to a real db for production applications
             options.UseInMemoryDatabase("TestDb");
+            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<JobPost>()
+                .HasMany(p => p.Tags)
+                .WithMany(p => p.JobPosts)
+                .UsingEntity<Jobs_Tags>(
+                    j => j
+                        .HasOne(pt => pt.Tag)
+                        .WithMany(t => t.JobPostTags)
+                        .HasForeignKey(pt => pt.TagId),
+                    j => j
+                        .HasOne(pt => pt.JobPost)
+                        .WithMany(p => p.PostTags)
+                        .HasForeignKey(pt => pt.PostId)
+                    
+);
         }
     }
 }
